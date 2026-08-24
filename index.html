@@ -214,14 +214,8 @@
 </main>
 
 <script>
-  const WORDS = [
-    "computer", "internet", "tastatur", "monitor", "software",
-    "roboter", "programm", "datenbank", "netzwerk", "browser",
-    "algorithmus", "pixel", "server", "technik", "digital",
-    "schule", "pausenhof", "abenteuer", "bibliothek", "schokolade",
-    "rakete", "planet", "vulkan", "dinosaurier", "regenbogen",
-    "fahrrad", "sommerferien", "geheimnis", "zauberstab", "leuchtturm"
-  ];
+  let WORDS = [];
+  const FALLBACK_WORDS = ["AUTO","BALL","BAUM","BÄR","BUCH","BUS","EIS","ENTE","FISCH","HAUS","HASE","HUND","IGEL","KATZE","KIND","KUH","MAUS","MOND","NASE","NEST","PFERD","RAD","REGEN","ROSE","SCHAF","SCHUH","SONNE","STERN","TASSE","TÜR","VOGEL","WALD","WOLKE","ZAHN","ZUG"];
 
   const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ";
   const MAX_MISTAKES = 6;
@@ -331,7 +325,26 @@
 
   document.getElementById("newGame").addEventListener("click", startGame);
 
-  startGame();
+  async function loadWords() {
+    try {
+      const response = await fetch("woerter.txt", { cache: "no-store" });
+      if (!response.ok) throw new Error("Wortliste konnte nicht geladen werden.");
+
+      WORDS = (await response.text())
+        .split(/\r?\n/)
+        .map(word => word.trim().toLocaleUpperCase("de-DE"))
+        .filter(word => word && !word.startsWith("#"));
+
+      if (!WORDS.length) throw new Error("Wortliste ist leer.");
+    } catch (error) {
+      console.warn(error);
+      WORDS = FALLBACK_WORDS;
+    }
+
+    startGame();
+  }
+
+  loadWords();
 </script>
 </body>
 </html>

@@ -1,24 +1,41 @@
 # Galgenmännchen
 
-Kleines, vollständig statisches Galgenmännchen-Spiel für **GitHub Pages**.
+Ein kleines Galgenmännchen-Spiel für Kinder der **1. und 2. Klasse**, vollständig statisch und direkt für GitHub Pages geeignet.
 
-## Start
+## Dateien
 
-1. Repository auf GitHub erstellen.
-2. `index.html` ins Repository legen.
-3. Unter **Settings → Pages** als Quelle **Deploy from a branch** auswählen.
-4. Branch `main` und Ordner `/ (root)` auswählen.
-5. Speichern.
+- `index.html` – das komplette Spiel
+- `woerter.txt` – Wortliste, **ein Wort pro Zeile**
 
-Danach ist das Spiel über die von GitHub angezeigte Pages-URL erreichbar.
+## Wortliste ändern
 
-## Eigenschaften
+Einfach `woerter.txt` bearbeiten:
 
-- keine Abhängigkeiten
-- kein Build-Prozess
-- responsive
-- Bildschirmtastatur + echte Tastatur
-- lokale Gewinnstatistik via `localStorage`
-- deutsche Umlaute unterstützt
+```text
+HAUS
+MAUS
+SONNE
+BALL
+KATZE
+```
 
-Die Wortliste befindet sich direkt in `index.html` im Array `WORDS`.
+Leerzeilen werden ignoriert. Zeilen, die mit `#` beginnen, können als Kommentare benutzt werden.
+
+```text
+# Tiere
+HUND
+KATZE
+MAUS
+```
+
+Danach nur committen/pushen – GitHub Pages verwendet automatisch die neue Liste.
+
+## GitHub Pages
+
+1. Dateien ins Repository legen.
+2. **Settings → Pages**
+3. **Deploy from a branch**
+4. Branch `main`, Ordner `/ (root)`
+5. Speichern
+
+Es gibt keinen Build-Prozess und keine externen Abhängigkeiten.
