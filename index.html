@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galgenmännchen</title>
+  <meta name="description" content="Ein kleines Galgenmännchen-Spiel für GitHub Pages.">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f172a;
+      --panel: #182235;
+      --text: #f8fafc;
+      --muted: #a8b3c7;
+      --accent: #38bdf8;
+      --danger: #fb7185;
+      --success: #4ade80;
+      --key: #25324a;
+      --key-hover: #334663;
+      --border: #344258;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, #172554 0, transparent 38rem),
+        var(--bg);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    main {
+      width: min(920px, 100%);
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: clamp(20px, 4vw, 36px);
+      box-shadow: 0 20px 70px rgba(0,0,0,.35);
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      letter-spacing: -.04em;
+    }
+
+    .subtitle {
+      margin: 0 0 28px;
+      color: var(--muted);
+    }
+
+    .game {
+      display: grid;
+      grid-template-columns: minmax(230px, .8fr) minmax(280px, 1.2fr);
+      gap: 32px;
+      align-items: center;
+    }
+
+    @media (max-width: 720px) {
+      .game { grid-template-columns: 1fr; }
+    }
+
+    svg {
+      width: 100%;
+      max-height: 330px;
+      overflow: visible;
+    }
+
+    .hangman-part {
+      stroke: var(--text);
+      stroke-width: 7;
+      stroke-linecap: round;
+      fill: none;
+      opacity: 0;
+      transition: opacity .2s ease;
+    }
+
+    .hangman-part.visible { opacity: 1; }
+
+    .word {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 8px 0 24px;
+    }
+
+    .letter-slot {
+      width: 34px;
+      height: 48px;
+      border-bottom: 3px solid var(--accent);
+      display: grid;
+      place-items: center;
+      font-size: 1.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status {
+      min-height: 1.8em;
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .status.win { color: var(--success); }
+    .status.lose { color: var(--danger); }
+
+    .meta {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(42px, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 8px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text);
+      background: var(--key);
+      transition: transform .1s ease, background .1s ease, opacity .1s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: var(--key-hover);
+    }
+
+    button:disabled {
+      opacity: .35;
+      cursor: default;
+    }
+
+    .actions {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #newGame {
+      background: var(--accent);
+      color: #082f49;
+      border-color: transparent;
+      padding-inline: 22px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 26px;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Galgenmännchen</h1>
+  <p class="subtitle">Errate das Wort, bevor die Zeichnung vollständig ist.</p>
+
+  <section class="game">
+    <div aria-label="Galgenmännchen-Zeichnung">
+      <svg viewBox="0 0 260 300" role="img">
+        <line x1="20" y1="280" x2="220" y2="280" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        <line x1="60" y1="280" x2="60" y2="25" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        <line x1="60" y1="25" x2="185" y2="25" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        <line x1="60" y1="70" x2="105" y2="25" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        <line x1="185" y1="25" x2="185" y2="58" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+
+        <circle class="hangman-part" data-part="0" cx="185" cy="82" r="24"/>
+        <line class="hangman-part" data-part="1" x1="185" y1="106" x2="185" y2="185"/>
+        <line class="hangman-part" data-part="2" x1="185" y1="125" x2="145" y2="155"/>
+        <line class="hangman-part" data-part="3" x1="185" y1="125" x2="225" y2="155"/>
+        <line class="hangman-part" data-part="4" x1="185" y1="185" x2="150" y2="235"/>
+        <line class="hangman-part" data-part="5" x1="185" y1="185" x2="220" y2="235"/>
+      </svg>
+    </div>
+
+    <div>
+      <div id="status" class="status" aria-live="polite"></div>
+      <div id="word" class="word" aria-label="Gesuchtes Wort"></div>
+
+      <div class="meta">
+        <span>Fehler: <strong id="mistakes">0</strong>/6</span>
+        <span>Gewonnen: <strong id="wins">0</strong></span>
+      </div>
+
+      <div id="keyboard" class="keyboard" aria-label="Buchstabentastatur"></div>
+
+      <div class="actions">
+        <button id="newGame" type="button">Neues Wort</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>Tipp: Du kannst auch direkt mit deiner Tastatur spielen.</footer>
+</main>
+
+<script>
+  const WORDS = [
+    "computer", "internet", "tastatur", "monitor", "software",
+    "roboter", "programm", "datenbank", "netzwerk", "browser",
+    "algorithmus", "pixel", "server", "technik", "digital",
+    "schule", "pausenhof", "abenteuer", "bibliothek", "schokolade",
+    "rakete", "planet", "vulkan", "dinosaurier", "regenbogen",
+    "fahrrad", "sommerferien", "geheimnis", "zauberstab", "leuchtturm"
+  ];
+
+  const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ";
+  const MAX_MISTAKES = 6;
+
+  let solution = "";
+  let guessed = new Set();
+  let mistakes = 0;
+  let finished = false;
+  let wins = Number(localStorage.getItem("hangman-wins") || 0);
+
+  const wordEl = document.getElementById("word");
+  const keyboardEl = document.getElementById("keyboard");
+  const statusEl = document.getElementById("status");
+  const mistakesEl = document.getElementById("mistakes");
+  const winsEl = document.getElementById("wins");
+  const parts = [...document.querySelectorAll(".hangman-part")];
+
+  function normalizeLetter(ch) {
+    return ch.toLocaleUpperCase("de-DE");
+  }
+
+  function startGame() {
+    const old = solution;
+    do {
+      solution = WORDS[Math.floor(Math.random() * WORDS.length)].toLocaleUpperCase("de-DE");
+    } while (WORDS.length > 1 && solution === old);
+
+    guessed = new Set();
+    mistakes = 0;
+    finished = false;
+
+    statusEl.textContent = "";
+    statusEl.className = "status";
+    mistakesEl.textContent = "0";
+    winsEl.textContent = wins;
+
+    parts.forEach(p => p.classList.remove("visible"));
+    buildKeyboard();
+    renderWord();
+  }
+
+  function buildKeyboard() {
+    keyboardEl.innerHTML = "";
+    [...LETTERS].forEach(letter => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = letter;
+      btn.dataset.letter = letter;
+      btn.setAttribute("aria-label", `Buchstabe ${letter}`);
+      btn.addEventListener("click", () => guess(letter));
+      keyboardEl.appendChild(btn);
+    });
+  }
+
+  function renderWord(reveal = false) {
+    wordEl.innerHTML = "";
+    [...solution].forEach(letter => {
+      const slot = document.createElement("span");
+      slot.className = "letter-slot";
+      slot.textContent = reveal || guessed.has(letter) ? letter : "";
+      wordEl.appendChild(slot);
+    });
+  }
+
+  function guess(letter) {
+    if (finished || guessed.has(letter) || !LETTERS.includes(letter)) return;
+
+    guessed.add(letter);
+
+    const btn = keyboardEl.querySelector(`[data-letter="${CSS.escape(letter)}"]`);
+    if (btn) btn.disabled = true;
+
+    if (!solution.includes(letter)) {
+      mistakes++;
+      mistakesEl.textContent = mistakes;
+      if (parts[mistakes - 1]) parts[mistakes - 1].classList.add("visible");
+    }
+
+    renderWord();
+
+    const solved = [...solution].every(letter => guessed.has(letter));
+    if (solved) {
+      finished = true;
+      wins++;
+      localStorage.setItem("hangman-wins", wins);
+      winsEl.textContent = wins;
+      statusEl.textContent = "Gewonnen! 🎉";
+      statusEl.className = "status win";
+      disableKeyboard();
+    } else if (mistakes >= MAX_MISTAKES) {
+      finished = true;
+      renderWord(true);
+      statusEl.textContent = `Verloren – das Wort war „${solution}“.`;
+      statusEl.className = "status lose";
+      disableKeyboard();
+    }
+  }
+
+  function disableKeyboard() {
+    keyboardEl.querySelectorAll("button").forEach(btn => btn.disabled = true);
+  }
+
+  document.addEventListener("keydown", event => {
+    const letter = normalizeLetter(event.key);
+    if (letter.length === 1 && LETTERS.includes(letter)) guess(letter);
+  });
+
+  document.getElementById("newGame").addEventListener("click", startGame);
+
+  startGame();
+</script>
+</body>
+</html>
