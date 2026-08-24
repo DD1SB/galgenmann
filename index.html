@@ -7,17 +7,20 @@
   <meta name="description" content="Ein kleines Galgenmännchen-Spiel für GitHub Pages.">
   <style>
     :root {
-      color-scheme: light dark;
-      --bg: #0f172a;
-      --panel: #182235;
-      --text: #f8fafc;
-      --muted: #a8b3c7;
-      --accent: #38bdf8;
-      --danger: #fb7185;
-      --success: #4ade80;
-      --key: #25324a;
-      --key-hover: #334663;
-      --border: #344258;
+      color-scheme: light;
+      --bg1: #fff4b8;
+      --bg2: #bde7ff;
+      --panel: #fffdf8;
+      --text: #2d2a32;
+      --muted: #6c6480;
+      --accent: #ff8fab;
+      --accent2: #70d6ff;
+      --accent3: #ffd166;
+      --danger: #ff5d73;
+      --success: #4ecb71;
+      --key: #ffffff;
+      --key-hover: #fff1f6;
+      --border: #2d2a32;
     }
 
     * { box-sizing: border-box; }
@@ -25,10 +28,11 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Trebuchet MS", "Comic Sans MS", system-ui, sans-serif;
       background:
-        radial-gradient(circle at top, #172554 0, transparent 38rem),
-        var(--bg);
+        radial-gradient(circle at 15% 15%, #ffffffaa 0 90px, transparent 92px),
+        radial-gradient(circle at 85% 20%, #ffffff99 0 70px, transparent 72px),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
       color: var(--text);
       display: grid;
       place-items: center;
@@ -37,22 +41,26 @@
 
     main {
       width: min(920px, 100%);
-      background: color-mix(in srgb, var(--panel) 94%, transparent);
-      border: 1px solid var(--border);
-      border-radius: 22px;
+      background: var(--panel);
+      border: 4px solid var(--border);
+      border-radius: 28px;
       padding: clamp(20px, 4vw, 36px);
-      box-shadow: 0 20px 70px rgba(0,0,0,.35);
+      box-shadow: 9px 9px 0 #2d2a32;
+      transform: rotate(-0.2deg);
     }
 
     h1 {
       margin: 0 0 6px;
       font-size: clamp(2rem, 6vw, 3.6rem);
       letter-spacing: -.04em;
+      color: #ff5d8f;
+      text-shadow: 3px 3px 0 #ffd166;
     }
 
     .subtitle {
       margin: 0 0 28px;
       color: var(--muted);
+      font-weight: 700;
     }
 
     .game {
@@ -78,10 +86,11 @@
       stroke-linecap: round;
       fill: none;
       opacity: 0;
-      transition: opacity .2s ease;
+      transition: opacity .2s ease, transform .2s ease;
+      transform-origin: center;
     }
 
-    .hangman-part.visible { opacity: 1; }
+    .hangman-part.visible { opacity: 1; transform: scale(1.02); }
 
     .word {
       display: flex;
@@ -92,14 +101,16 @@
     }
 
     .letter-slot {
-      width: 34px;
-      height: 48px;
-      border-bottom: 3px solid var(--accent);
+      width: 38px;
+      height: 50px;
+      border-bottom: 4px solid var(--accent2);
       display: grid;
       place-items: center;
-      font-size: 1.65rem;
-      font-weight: 700;
+      font-size: 1.75rem;
+      font-weight: 900;
       text-transform: uppercase;
+      color: #5d3fd3;
+      text-shadow: 1px 1px 0 #ffffff;
     }
 
     .status {
@@ -128,20 +139,22 @@
     }
 
     button {
-      border: 1px solid var(--border);
-      border-radius: 10px;
+      border: 3px solid var(--border);
+      border-radius: 14px;
       padding: 11px 8px;
       font: inherit;
-      font-weight: 700;
+      font-weight: 900;
       cursor: pointer;
       color: var(--text);
       background: var(--key);
-      transition: transform .1s ease, background .1s ease, opacity .1s ease;
+      box-shadow: 3px 3px 0 var(--border);
+      transition: transform .1s ease, background .1s ease, box-shadow .1s ease, opacity .1s ease;
     }
 
     button:hover:not(:disabled) {
-      transform: translateY(-1px);
+      transform: translate(-1px, -1px) rotate(-1deg);
       background: var(--key-hover);
+      box-shadow: 5px 5px 0 var(--border);
     }
 
     button:disabled {
@@ -156,9 +169,9 @@
     }
 
     #newGame {
-      background: var(--accent);
-      color: #082f49;
-      border-color: transparent;
+      background: var(--accent3);
+      color: #3b2f00;
+      border-color: var(--border);
       padding-inline: 22px;
     }
 
@@ -178,18 +191,17 @@
   <section class="game">
     <div aria-label="Galgenmännchen-Zeichnung">
       <svg viewBox="0 0 260 300" role="img">
-        <line x1="20" y1="280" x2="220" y2="280" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
-        <line x1="60" y1="280" x2="60" y2="25" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
-        <line x1="60" y1="25" x2="185" y2="25" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
-        <line x1="60" y1="70" x2="105" y2="25" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
-        <line x1="185" y1="25" x2="185" y2="58" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
-
-        <circle class="hangman-part" data-part="0" cx="185" cy="82" r="24"/>
-        <line class="hangman-part" data-part="1" x1="185" y1="106" x2="185" y2="185"/>
-        <line class="hangman-part" data-part="2" x1="185" y1="125" x2="145" y2="155"/>
-        <line class="hangman-part" data-part="3" x1="185" y1="125" x2="225" y2="155"/>
-        <line class="hangman-part" data-part="4" x1="185" y1="185" x2="150" y2="235"/>
-        <line class="hangman-part" data-part="5" x1="185" y1="185" x2="220" y2="235"/>
+        <line class="hangman-part" data-part="0" x1="20" y1="280" x2="220" y2="280"/>
+        <line class="hangman-part" data-part="1" x1="60" y1="280" x2="60" y2="25"/>
+        <line class="hangman-part" data-part="2" x1="60" y1="25" x2="185" y2="25"/>
+        <line class="hangman-part" data-part="3" x1="60" y1="70" x2="105" y2="25"/>
+        <line class="hangman-part" data-part="4" x1="185" y1="25" x2="185" y2="58"/>
+        <circle class="hangman-part" data-part="5" cx="185" cy="82" r="24"/>
+        <line class="hangman-part" data-part="6" x1="185" y1="106" x2="185" y2="185"/>
+        <line class="hangman-part" data-part="7" x1="185" y1="125" x2="145" y2="155"/>
+        <line class="hangman-part" data-part="8" x1="185" y1="125" x2="225" y2="155"/>
+        <line class="hangman-part" data-part="9" x1="185" y1="185" x2="150" y2="235"/>
+        <line class="hangman-part" data-part="10" x1="185" y1="185" x2="220" y2="235"/>
       </svg>
     </div>
 
@@ -198,7 +210,7 @@
       <div id="word" class="word" aria-label="Gesuchtes Wort"></div>
 
       <div class="meta">
-        <span>Fehler: <strong id="mistakes">0</strong>/6</span>
+        <span>Fehler: <strong id="mistakes">0</strong>/11</span>
         <span>Gewonnen: <strong id="wins">0</strong></span>
       </div>
 
@@ -218,7 +230,7 @@
   const FALLBACK_WORDS = ["AUTO","BALL","BAUM","BÄR","BUCH","BUS","EIS","ENTE","FISCH","HAUS","HASE","HUND","IGEL","KATZE","KIND","KUH","MAUS","MOND","NASE","NEST","PFERD","RAD","REGEN","ROSE","SCHAF","SCHUH","SONNE","STERN","TASSE","TÜR","VOGEL","WALD","WOLKE","ZAHN","ZUG"];
 
   const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ";
-  const MAX_MISTAKES = 6;
+  const MAX_MISTAKES = 11;
 
   let solution = "";
   let guessed = new Set();

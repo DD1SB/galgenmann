@@ -39,3 +39,8 @@ Danach nur committen/pushen – GitHub Pages verwendet automatisch die neue List
 5. Speichern
 
 Es gibt keinen Build-Prozess und keine externen Abhängigkeiten.
+
+
+## Spielablauf
+
+Der Galgen wird bei Fehlern Schritt für Schritt aufgebaut. Insgesamt sind 11 Fehlversuche möglich.
